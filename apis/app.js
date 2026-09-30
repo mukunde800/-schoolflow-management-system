@@ -1,22 +1,28 @@
-// app.js
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const { sequelize } = require("./models");
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
+const env = require('./config/env');
+const routes = require('./routes');
+const errorMiddleware = require('./middlewares/erroMiddleware');
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-app.get("/", (req, res) => res.json({ message: "API OK" }));
+app.use(helmet());
+app.use(cors({ origin: env.clientUrl, credentials: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(morgan(env.nodeEnv === 'development' ? 'dev' : 'combined'));
+app.use('/api', rateLimit({ windowMs: 15 * 60 * 1000, max: 500 }));
 
-// Démarrage direct
-const PORT = process.env.PORT || 3000;
+app.get('/health', (_, res) => res.json({ status: 'ok', uptime: process.uptime() }));
 
-sequelize
-  .sync()
-  .then(() => {
-    console.log("✅ DB synchronisée");
-    app.listen(PORT, () => console.log(`🚀 http://localhost:${PORT}`));
-  })
-  .catch((err) => console.error("❌ Erreur DB :", err));
+app.use('/api/v1', routes);
+
+app.use((req, res) => res.status(404).json({ message: 'Route introuvable' }));
+app.use(errorMiddleware);
+
+module.exports = app;

@@ -1,43 +1,26 @@
-'use strict';
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const process = require('process');
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
-const db = {};
+const User = require('./User')(sequelize, DataTypes);
+const Student = require('./Student')(sequelize, DataTypes);
+const Teacher = require('./Teacher')(sequelize, DataTypes);
+const Parent = require('./Parent')(sequelize, DataTypes);
+const Class = require('./Class')(sequelize, DataTypes);
+const Subject = require('./Subject')(sequelize, DataTypes);
+const Enrollment = require('./Enrollment')(sequelize, DataTypes);
+const Grade = require('./Grade')(sequelize, DataTypes);
+const Attendance = require('./Attendance')(sequelize, DataTypes);
+const Payment = require('./Payment')(sequelize, DataTypes);
+const Schedule = require('./Schedule')(sequelize, DataTypes);
+const Announcement = require('./Announcement')(sequelize, DataTypes);
 
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+const models = {
+  User, Student, Teacher, Parent, Class, Subject,
+  Enrollment, Grade, Attendance, Payment, Schedule, Announcement,
+};
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
+Object.values(models).forEach((model) => {
+  if (model.associate) model.associate(models);
 });
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
+module.exports = { sequelize, ...models };
