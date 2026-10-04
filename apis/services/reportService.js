@@ -1,4 +1,4 @@
-const { Grade, Student, Subject } = require('../src/models');
+const { Grade, Student, Subject } = require('../models');
 
 exports.getStudentReport = async (studentId) => {
   const student = await Student.findByPk(studentId, { include: ['user', 'class'] });

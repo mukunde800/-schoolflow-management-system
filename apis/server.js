@@ -8,12 +8,13 @@ const logger = require('./utils/logger');
     await sequelize.authenticate();
     logger.info('✅ Connexion MySQL établie');
 
-    if (env.nodeEnv === 'development') {
-      await sequelize.sync({ alter: false });
-      logger.info('✅ Modèles synchronisés');
-    }
+    // ⚠️ À lancer UNE FOIS pour créer les tables (en dev)
+    await sequelize.sync({ alter: true });
+    logger.info('✅ Tables synchronisées');
 
-    app.listen(env.port, () => logger.info(`🚀 Serveur démarré sur http://localhost:${env.port}`));
+    app.listen(env.port, () =>
+      logger.info(`🚀 Serveur démarré sur http://localhost:${env.port}`)
+    );
   } catch (err) {
     logger.error('❌ Erreur démarrage :', err);
     process.exit(1);

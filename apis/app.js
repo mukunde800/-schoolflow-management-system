@@ -11,7 +11,32 @@ const errorMiddleware = require('./middlewares/erroMiddleware');
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.clientUrl, credentials: true }));
+
+// ✅ CORS permissif en dev : accepte localhost et 127.0.0.1 sur n'importe quel port
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // Postman, curl, mobile
+
+    // En dev : accepte tout localhost/127.0.0.1
+    if (env.nodeEnv === 'development') {
+      if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+    }
+
+    // En prod : uniquement CLIENT_URL
+    if (origin === env.clientUrl) {
+      return callback(null, true);
+    }
+
+    console.warn(`🚫 CORS bloqué : ${origin}`);
+    return callback(new Error('Non autorisé par CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

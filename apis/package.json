@@ -20,11 +20,11 @@
     "nodemon": "^3.1.14",
     "sequelize-cli": "^6.6.5"
   },
-  "scripts": {
-    "dev": "nodemon server.js",
-    "start": "node server.js",
-    "migrate": "sequelize-cli db:migrate",
-    "seed": "sequelize-cli db:seed:all",
-    "migrate:undo": "sequelize-cli db:migrate:undo:all"
-  }
+ "scripts": {
+  "dev": "nodemon server.js",
+  "start": "node server.js",
+  "db:reset": "node scripts/reset-db.js",
+  "seed": "sequelize-cli db:seed:all",
+  "db:refresh": "npm run db:reset && npm run seed"
+}
 }
