@@ -24,6 +24,7 @@ import SchedulesPage from '../components/pages/schulde/SchedulesPage';
 import AnnouncementsPage from '../components/pages/announcements/AnnouncementsPage';
 import ReportsPage from '../components/pages/rapports/RapportsPage';
 import SettingsPage from '../components/pages/settings/SettingsPage';
+import ProfilePage from '../components/pages/profile/ProfilePage';
 import NotFoundPage from '../components/pages/NotFoundPage';
 
 export default function AppRoutes() {
@@ -40,6 +41,7 @@ export default function AppRoutes() {
           <Route path="/dashboard/teacher" element={<TeacherDashboard />} />
           <Route path="/dashboard/student" element={<StudentDashboard />} />
           <Route path="/dashboard/parent" element={<ParentDashboard />} />
+          <Route path="/profile" element={<ProfilePage />} />
 
           <Route path="/students" element={<StudentsListPage />} />
           <Route path="/students/new" element={<StudentCreatePage />} />

@@ -13,10 +13,12 @@ const Attendance = require('./Attendance')(sequelize, DataTypes);
 const Payment = require('./Payment')(sequelize, DataTypes);
 const Schedule = require('./Schedule')(sequelize, DataTypes);
 const Announcement = require('./Announcement')(sequelize, DataTypes);
+const Setting = require('./Setting')(sequelize, DataTypes);
+
 
 const models = {
   User, Student, Teacher, Parent, Class, Subject,
-  Enrollment, Grade, Attendance, Payment, Schedule, Announcement,
+  Enrollment, Grade, Attendance, Payment, Schedule, Announcement, Setting,
 };
 
 Object.values(models).forEach((model) => {
